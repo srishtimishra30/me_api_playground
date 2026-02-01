@@ -1,5 +1,7 @@
 const API = "https://me-api-playground-zrps.onrender.com";
 
+let PROJECTS = []
+
 async function loadProfile() {
   const res = await fetch(`${API}/profile`);
   const data = await res.json();
@@ -17,17 +19,58 @@ async function loadSkills() {
   ul.innerHTML = "";
   data.forEach(skill => {
     const li = document.createElement("li");
-    li.innerText = skill;
+    const a = document.createElement("a");
+    a.setAttribute('href', `?skill=${skill}`)
+    a.textContent = skill;
+     a.addEventListener("click", (e) => {
+      e.preventDefault();
+      history.pushState(null, "", `?skill=${skill}`);
+      filterSkills()
+    });
+    li.appendChild(a)
     ul.appendChild(li);
   });
 }
 
+
+function handleRouteChange() {
+  const params = new URLSearchParams(window.location.search);
+  const skill = params.get("skill");
+
+  if (skill) {
+    filterSkills(); 
+  } else {
+    loadProjects();
+  }
+}
+
+async function filterSkills() {
+ const params = new URLSearchParams(window.location.search);
+  const skill = params.get('skill');
+
+  if (!skill) return;
+
+  const res = await fetch(`${API}/projects/${skill}`);
+  const data = await res.json();
+
+  PROJECTS = data; 
+  renderProjects(); 
+}
+
 async function loadProjects() {
+ console.log('load projects');
+
   const res = await fetch(`${API}/projects`);
   const data = await res.json();
+
+  PROJECTS = data;   // overwrite instead of reset + refill
+  renderProjects();
+}
+
+function renderProjects() {
   const div = document.getElementById("projects");
   div.innerHTML = "";
-  data.forEach(p => {
+  PROJECTS.forEach(p => {
     const card = document.createElement("div");
     card.className = "card";
     card.innerHTML = `
@@ -38,6 +81,10 @@ async function loadProjects() {
     div.appendChild(card);
   });
 }
+
+window.addEventListener("popstate", () => {
+  handleRouteChange();
+})
 
 loadProfile();
 loadSkills();

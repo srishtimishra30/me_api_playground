@@ -62,7 +62,7 @@ def top_skills():
 def projects():
     conn = get_conn()
     cur = conn.cursor()
-    cur.execute("SELECT title, description, link FROM projects;")
+    cur.execute("SELECT title, description, link, skill FROM projects;")
     rows = cur.fetchall()
     cur.close()
     conn.close()
