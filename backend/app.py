@@ -13,7 +13,7 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 print("DB URL Loaded:", DATABASE_URL)   # debug line
 
 def get_conn():
-    return psycopg2.connect(DATABASE_URL, sslmode='require')
+    return psycopg2.connect('postgresql://postgres:Srishti@123@db.jrdszycfnpfbksmbyugx.supabase.co:5432/postgres', sslmode='require')
 
 @app.route("/health")
 def health():
@@ -21,6 +21,7 @@ def health():
 
 @app.route("/profile")
 def profile():
+    print('debug')
     conn = get_conn()
     cur = conn.cursor()
     cur.execute("SELECT name, email, education FROM profile LIMIT 1;")
@@ -112,4 +113,5 @@ def home():
         ]
     }
 if __name__ == "__main__":
+    print(f'in this block {DATABASE_URL}')
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
