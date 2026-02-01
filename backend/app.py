@@ -11,168 +11,72 @@ CORS(app)
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-print("DB URL Loaded:", DATABASE_URL)
-
 def get_conn():
+    if not DATABASE_URL:
+        raise Exception("DATABASE_URL not set")
     return psycopg2.connect(DATABASE_URL, sslmode="require")
 
-# -------------------------
-# HEALTH CHECK
-# -------------------------
 @app.route("/health")
 def health():
-    return jsonify({"status": "ok"}), 200
+    return jsonify({"status": "ok"})
 
-
-# -------------------------
-# HOME
-# -------------------------
 @app.route("/")
 def home():
-    return jsonify({
-        "message": "API is running",
-        "endpoints": [
-            "/health",
-            "/profile",
-            "/skills",
-            "/skills/top",
-            "/projects",
-            "/projects/python",
-            "/search?q=ai"
-        ]
-    })
+    return jsonify({"message": "API running"})
 
-
-# -------------------------
-# PROFILE
-# -------------------------
+# ---------- PROFILE ----------
 @app.route("/profile")
 def profile():
-    conn = get_conn()
-    cur = conn.cursor()
-    cur.execute("SELECT name, email, education FROM profile LIMIT 1;")
-    row = cur.fetchone()
-    cur.close()
-    conn.close()
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute("SELECT name, email, education FROM profile LIMIT 1;")
+        row = cur.fetchone()
+        cur.close()
+        conn.close()
 
-    if not row:
-        return jsonify({"error": "Profile not found"}), 404
+        if not row:
+            return jsonify({"error": "No profile data"}), 404
 
-    return jsonify({
-        "name": row[0],
-        "email": row[1],
-        "education": row[2]
-    })
+        return jsonify({
+            "name": row[0],
+            "email": row[1],
+            "education": row[2]
+        })
 
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-# -------------------------
-# SKILLS
-# -------------------------
+# ---------- SKILLS ----------
 @app.route("/skills")
 def skills():
-    conn = get_conn()
-    cur = conn.cursor()
-    cur.execute("SELECT name FROM skills;")
-    rows = cur.fetchall()
-    cur.close()
-    conn.close()
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute("SELECT name FROM skills;")
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+        return jsonify([r[0] for r in rows])
 
-    return jsonify([r[0] for r in rows])
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-
-# -------------------------
-# TOP SKILLS
-# -------------------------
-@app.route("/skills/top")
-def top_skills():
-    conn = get_conn()
-    cur = conn.cursor()
-    cur.execute("SELECT name FROM skills LIMIT 5;")
-    rows = cur.fetchall()
-    cur.close()
-    conn.close()
-
-    return jsonify([r[0] for r in rows])
-
-
-# -------------------------
-# PROJECTS
-# -------------------------
+# ---------- PROJECTS ----------
 @app.route("/projects")
 def projects():
-    conn = get_conn()
-    cur = conn.cursor()
-    cur.execute("SELECT title, description, link FROM projects;")
-    rows = cur.fetchall()
-    cur.close()
-    conn.close()
+    try:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute("SELECT title, description, link FROM projects;")
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
 
-    return jsonify([
-        {
-            "title": r[0],
-            "description": r[1],
-            "link": r[2]
-        }
-        for r in rows
-    ])
+        return jsonify([
+            {"title": r[0], "description": r[1], "link": r[2]}
+            for r in rows
+        ])
 
-
-# -------------------------
-# PROJECTS BY SKILL
-# -------------------------
-@app.route("/projects/<skill>")
-def projects_by_skill(skill):
-    conn = get_conn()
-    cur = conn.cursor()
-    cur.execute(
-        "SELECT title, description, link FROM projects WHERE description ILIKE %s;",
-        (f"%{skill}%",)
-    )
-    rows = cur.fetchall()
-    cur.close()
-    conn.close()
-
-    return jsonify([
-        {
-            "title": r[0],
-            "description": r[1],
-            "link": r[2]
-        }
-        for r in rows
-    ])
-
-
-# -------------------------
-# SEARCH
-# -------------------------
-@app.route("/search")
-def search():
-    q = request.args.get("q", "")
-
-    if not q:
-        return jsonify([])
-
-    conn = get_conn()
-    cur = conn.cursor()
-    cur.execute(
-        "SELECT title, description FROM projects WHERE title ILIKE %s;",
-        (f"%{q}%",)
-    )
-    rows = cur.fetchall()
-    cur.close()
-    conn.close()
-
-    return jsonify([
-        {
-            "title": r[0],
-            "description": r[1]
-        }
-        for r in rows
-    ])
-
-
-# -------------------------
-# RUN LOCAL (ignored by Render)
-# -------------------------
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
