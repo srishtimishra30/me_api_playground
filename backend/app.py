@@ -10,10 +10,8 @@ CORS(app)
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-print("DB URL Loaded:", DATABASE_URL)   # debug line
-
 def get_conn():
-    return psycopg2.connect('postgresql://postgres.jrdszycfnpfbksmbyugx:admonSupabase123@aws-1-ap-south-1.pooler.supabase.com:6543/postgres', sslmode='require')
+    return psycopg2.connect(DATABASE_URL, sslmode='require')
 
 @app.route("/health")
 def health():
