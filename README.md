@@ -2,7 +2,8 @@
 A full-stack REST API project built with **FastAPI** (backend) and **HTML/CSS/JS** (frontend).
 
 ## 📁 Project Structure
-REST-API-Practice/
+
+```REST-API-Practice/
 ├── backend/
 │   ├── app.py         
 │   ├── requirements.txt
@@ -12,6 +13,7 @@ REST-API-Practice/
 │   ├── style.css
 │   └── script.js
 └── README.md
+```
 
 ## 🛠️ Tech Stack
 - **Backend:** Python, FastAPI
