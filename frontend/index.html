@@ -1,21 +1,83 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>My Portfolio API</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
 </head>
 <body>
 
-<h1 id="name">Loading...</h1>
-<p id="email"></p>
-<p id="education"></p>
+  <!-- Wake-up banner for cold start -->
+  <div id="wake-banner" class="wake-banner">
+    <div class="wake-inner">
+      <span class="wake-dot"></span>
+      <span id="wake-msg">Waking up server — this takes ~15s on first load...</span>
+    </div>
+  </div>
 
-<h2>Skills</h2>
-<ul id="skills"></ul>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <p class="hero-greeting">Hey, I'm</p>
+      <h1 id="hero-name" class="hero-name skeleton-line" style="width:260px;height:52px"></h1>
+      <p id="hero-edu" class="hero-edu skeleton-line" style="width:340px;height:20px;margin-top:12px"></p>
+      <div class="hero-actions">
+        <a id="hero-email" href="#" class="btn btn-outline skeleton-btn">Loading...</a>
+        <a href="https://drive.google.com/file/d/1BEvvLbrZDGugoHgvB0jGYZDnpY3EpY_Q/view?usp=sharing"
+           target="_blank" class="btn btn-primary">View Resume ↗</a>
+      </div>
+    </div>
+    <div class="hero-badge">
+      <span class="badge-text">Final Year<br/>CS Student</span>
+    </div>
+  </section>
 
-<h2>Projects</h2>
-<div id="projects"></div>
+  <!-- API Explorer pill -->
+  <div class="api-pill-wrap">
+    <a href="https://me-api-playground-zrps.onrender.com/docs" target="_blank" class="api-pill">
+      <span class="api-dot"></span> Live API Docs (FastAPI Swagger) ↗
+    </a>
+  </div>
 
-<script src="script.js"></script>
+  <!-- Skills -->
+  <section class="section" id="skills-section">
+    <h2 class="section-title">Skills</h2>
+    <div id="skills-wrap" class="skills-wrap">
+      <div class="skill-skeleton"></div>
+      <div class="skill-skeleton"></div>
+      <div class="skill-skeleton"></div>
+      <div class="skill-skeleton"></div>
+    </div>
+  </section>
+
+  <!-- Search + Projects -->
+  <section class="section" id="projects-section">
+    <div class="projects-header">
+      <h2 class="section-title">Projects</h2>
+      <div class="search-wrap">
+        <input id="search-input" type="text" placeholder="Search projects..." class="search-input" />
+        <button id="search-btn" class="search-btn">Search</button>
+        <button id="clear-btn" class="clear-btn hidden">✕ Clear</button>
+      </div>
+    </div>
+    <p id="filter-label" class="filter-label hidden"></p>
+    <div id="projects-grid" class="projects-grid">
+      <div class="card-skeleton"></div>
+      <div class="card-skeleton"></div>
+      <div class="card-skeleton"></div>
+    </div>
+    <p id="no-results" class="no-results hidden">No projects found.</p>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>Built with FastAPI + PostgreSQL + Vanilla JS &nbsp;·&nbsp; Hosted on Render + Netlify</p>
+    <p class="footer-sub">Portfolio API — Final Year Project</p>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
